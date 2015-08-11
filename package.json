@@ -1,0 +1,24 @@
+{
+  "name": "snoozy",
+  "version": "0.0.1",
+  "description": "CouchDB on PostgreSQL",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lancecarlson/snoozy.git"
+  },
+  "author": "Lancelot Carlson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lancecarlson/snoozy/issues"
+  },
+  "homepage": "https://github.com/lancecarlson/snoozy",
+  "dependencies": {
+    "bluebird": "^2.9.34",
+    "body-parser": "^1.13.3",
+    "express": "^4.13.3",
+    "knex": "^0.8.6",
+    "morgan": "^1.6.1",
+    "pg": "^4.4.1"
+  }
+}
