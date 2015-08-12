@@ -4,10 +4,16 @@ var knex = require('./knex'),
 var ErrNotFound = new Error("not found");
 ErrNotFound.code = 404;
 
+var ErrDbNotFound = new Error("database not found");
+ErrDbNotFound.code = 404;
+
 var ErrDocumentUpdateConflict = new Error("Document update conflict");
 ErrNotFound.code = 409;
 
-var Doc = function(db) {
+var Doc = function(s, db) {
+  if (!s.dbs[db]) {
+    throw ErrDbNotFound;
+  }
   return {
     db: db || 'docs',
     doc_field: 'doc',
