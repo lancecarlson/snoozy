@@ -12,12 +12,25 @@ var Db = function(db) {
         .where('table_schema', '!=', 'information_schema')
         .then(function(columns) {
           var tables = {};
+
+          // Insert column information and generate initial table object
           columns.forEach(function(column) {
             var tableName = column.table_name;
             delete column.table_name;
             tables[tableName] = tables[tableName] || {columns: []};
             tables[tableName].columns.push(column);
           });
+
+          // Filter out tables that don't have an id and rev in their schema
+          for (var name in tables) {
+            var tbl = tables[name];
+            var columnNames = tbl.columns.map(function(column) {
+              return column.column_name;
+            });
+            if (!(columnNames.indexOf('id') > -1 && columnNames.indexOf('rev') > -1))
+              delete tables[name];
+          }
+
           return tables;
         }).then(function(tables) {
           var securityP = Object.keys(tables).map(function(tbl) {
