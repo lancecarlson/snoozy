@@ -49,11 +49,13 @@ var Db = function(db) {
     },
     create: function() {
       var self = this;
-      return knex.schema.createTable(this.db, function(table) {
-        table.text('id').defaultTo(knex.raw('uuid_generate_v4()')).primary();
-        table.text('rev').defaultTo(knex.raw('uuid_generate_v4()'));
-        table.json(self.doc_field, true).notNullable().default('{}');
-      });
+      return knex.schema
+        .raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
+        .createTable(this.db, function(table) {
+          table.text('id').defaultTo(knex.raw('uuid_generate_v4()')).primary();
+          table.text('rev').defaultTo(knex.raw('uuid_generate_v4()'));
+          table.json(self.doc_field, true).notNullable().default('{}');
+        });
     },
     delete: function() {
       return knex.schema.dropTable(this.db);
