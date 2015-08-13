@@ -21,11 +21,19 @@ var Server = function() {
     onError: onError,
     auth: function(req, res, next) {
       var db = s.dbs[req.params.db];
+
+      // if we can't find database, use _config database's _security doc
+      // otherwise, skip auth
+      if (!db) {
+        db = s.dbs._config;
+        if (!db)
+          return next();
+      }
+
       var security = db._security;
       var jwt_pubkey;
-      if (db._security) {
+      if (db._security)
         jwt_pubkey = db._security.doc.pubkey;
-      } 
 
       // skip authorization checks if there is no pubkey
       if (!jwt_pubkey)
