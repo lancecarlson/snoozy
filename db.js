@@ -5,6 +5,7 @@ var Db = function(db) {
     db: db,
     doc_field: 'doc',
     list: function() {
+      var self = this;
       return knex('information_schema.columns')
         .select('table_name', 'column_name', 'data_type', 'column_default', 'is_nullable')
         .where('table_schema', '!=', 'pg_catalog')
@@ -18,6 +19,19 @@ var Db = function(db) {
             tables[tableName].columns.push(column);
           });
           return tables;
+        }).then(function(tables) {
+          var securityP = Object.keys(tables).map(function(tbl) {
+            return self.security(tbl).then(function(doc) {
+              return {tbl: tbl, doc: doc};
+            });
+          });
+          return Promise.all(securityP).then(function(docs) {
+            docs.forEach(function(doc) {
+              if (doc.doc)
+                tables[doc.tbl]._security = doc.doc;
+            });
+            return tables;
+          });
         });
     },
     create: function() {
@@ -31,6 +45,9 @@ var Db = function(db) {
     delete: function() {
       return knex.schema.dropTable(this.db);
     },
+    security: function(db) {
+      return knex(db).first().where('id', '_security');
+    }
   }
 };
 
